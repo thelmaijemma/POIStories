@@ -1,0 +1,27 @@
+
+
+<html>
+  <head>
+    <title>POI Stories</title>
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=default"></script>
+    <script
+      src="https://maps.googleapis.com/maps/api/js?key=YOURAPIKEY&callback=initMap&libraries=places&v=weekly"
+      defer
+    ></script>
+    <link rel="stylesheet" type="text/css" href="style.css" />
+    <script src="index.js"></script>
+    <script src="https://code.jquery.com/jquery-3.4.1.slim.js" crossorigin="anonymous"></script>
+  </head>
+  <body>
+    <div id="map"></div>
+    <div id="infowindow-content">
+      <span id="place-address"></span>
+    </div>
+    <section class="instruction">
+      <h2>Pan to your location, or explore. Click on a POI</h2>
+    </section>
+    <section id="results">
+    </section>
+  </body>
+
+</html>
