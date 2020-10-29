@@ -109,8 +109,8 @@ function initMap() {
               const searchArray = name.split(/[ ,']+/);
               const searchName = searchArray.join('_');
               console.log("this is the search name:" + searchName);
-              console.log(`http://api.nytimes.com/svc/search/v2/articlesearch.json?q=${searchName}_${cityname}&sort=newest&api-key=${nytapi}`);
-              fetch(`http://api.nytimes.com/svc/search/v2/articlesearch.json?q=${name}_${cityname}&sort=newest&api-key=${nytapi}`)
+              console.log(`http://api.nytimes.com/svc/search/v2/articlesearch.json?q=${searchName}_${cityname}&sort=oldest&api-key=${nytapi}`);
+              fetch(`http://api.nytimes.com/svc/search/v2/articlesearch.json?q=${name}_${cityname}&sort=oldest&api-key=${nytapi}`)
               .then(response => response.json())
               .then(responseJson => 
                 displayResults(responseJson))
@@ -123,7 +123,7 @@ function initMap() {
               const altSearchArray = prepareAddress(address);
               console.log("here is the alt search array: "+ altSearchArray);
               const altSearch = altSearchArray.join('_');
-              fetch(`http://api.nytimes.com/svc/search/v2/articlesearch.json?q=${altSearch}&sort=newest&api-key=${nytapi}`)
+              fetch(`http://api.nytimes.com/svc/search/v2/articlesearch.json?q=${altSearch}&sort=oldest&api-key=${nytapi}`)
               .then(response => response.json())
               .then(responseJson => 
                 displayResults(responseJson))
