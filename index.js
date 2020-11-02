@@ -1,6 +1,5 @@
-// unrefactored code
-const nytapi = "yourNYTAPI";
 
+// INITIATING THE MAP 
 function isIconMouseEvent(e) {
   return "placeId" in e;
 }
@@ -10,9 +9,71 @@ function initMap() {
       const map = new google.maps.Map(document.getElementById("map"), {
         zoom: 12,
         center: origin,
+        mapTypeId: "roadmap",
+
       });
-    
-      placesService = new google.maps.places.PlacesService(map);
+
+// SEARCH BOX GENERATOR - GOOGLE CODE
+const input = document.getElementById("pac-input");
+const searchBox = new google.maps.places.SearchBox(input);
+  map.controls[google.maps.ControlPosition.TOP_LEFT].push(input);
+  // Bias the SearchBox results towards current map's viewport.
+  map.addListener("bounds_changed", () => {
+    searchBox.setBounds(map.getBounds());
+  });
+  let markers = [];
+  // Listen for the event fired when the user selects a prediction and retrieve
+  // more details for that place.
+searchBox.addListener("places_changed", () => {
+  const places = searchBox.getPlaces();
+  if (places.length == 0) {
+    return;
+  }
+  // Clear out the old markers.
+  markers.forEach((marker) => {
+    marker.setMap(null);
+  });
+  markers = [];
+  // For each place, get the icon, name and location.
+  const bounds = new google.maps.LatLngBounds();
+  places.forEach((place) => {
+
+    const icon = {
+      url: place.icon,
+      size: new google.maps.Size(71, 71),
+      origin: new google.maps.Point(0, 0),
+      anchor: new google.maps.Point(17, 34),
+      scaledSize: new google.maps.Size(25, 25),
+    };
+    // Create a marker for each place.
+    markers.push(
+      new google.maps.Marker({
+        map,
+        icon,
+        title: place.name,
+        position: place.geometry.location,
+      })
+      );
+      if (place.geometry.viewport) {
+        // Only geocodes have viewport.
+        bounds.union(place.geometry.viewport);
+      } else {
+        bounds.extend(place.geometry.location);
+      }
+    });
+    map.fitBounds(bounds);
+
+  })
+// INITIATE POI LISTENER 
+renderPlaces(map);
+    }
+
+
+
+
+// FORMAT PLACE ID AND POI CLICK EVENT LISTENER 
+function renderPlaces(map){
+  placesService = new google.maps.places.PlacesService(map);
       map.addListener("click", function (event){
         if (isIconMouseEvent(event)) {
           console.log("You clicked on place:" + event.placeId);
@@ -37,7 +98,7 @@ function initMap() {
             console.log("this is the vicinity: " + placeVicinity);
             const city = prepareVicinity (placeVicinity);
             console.log("this is the city: " + city);
-            prepareSearch(placeName, placeAddress, city);
+            prepareSearch(placeName, city);
            }
          
           }
@@ -45,40 +106,43 @@ function initMap() {
              }
             })
 
+}
 
-            let infoWindow;
 
-            infoWindow = new google.maps.InfoWindow();
-            const locationButton = document.createElement("button");
-            locationButton.textContent = "Pan to Current Location";
-            locationButton.classList.add("custom-map-control-button");
-            map.controls[google.maps.ControlPosition.TOP_CENTER].push(locationButton);
-            locationButton.addEventListener("click", () => {
-              // Try HTML5 geolocation.
-              if (navigator.geolocation) {
-                navigator.geolocation.getCurrentPosition(
-                  (position) => {
-                    const pos = {
-                      lat: position.coords.latitude,
-                      lng: position.coords.longitude,
-                    };
-                    infoWindow.setPosition(pos);
-                    infoWindow.setContent("Location found.");
-                    infoWindow.open(map);
-                    map.setCenter(pos);
-                  },
-                  () => {
-                    handleLocationError(true, infoWindow, map.getCenter());
-                  }
-                );
-              } else {
-                // Browser doesn't support Geolocation
-                handleLocationError(false, infoWindow, map.getCenter());
-              }
-            });
-          
-          
-          function handleLocationError(browserHasGeolocation, infoWindow, pos) {
+
+
+
+// CURRENT LOCATION TOOL  
+let infoWindow;
+infoWindow = new google.maps.InfoWindow();
+  const locationButton = document.createElement("button");
+    locationButton.textContent = "Pan to Current Location";
+    locationButton.classList.add("custom-map-control-button");
+    map.controls[google.maps.ControlPosition.TOP_CENTER].push(locationButton);
+    locationButton.addEventListener("click", () => {
+    // Try HTML5 geolocation.
+    if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(
+        (position) => {
+        const pos = {
+        lat: position.coords.latitude,
+        lng: position.coords.longitude,
+          };
+        infoWindow.setPosition(pos);
+        infoWindow.setContent("Location found.");
+        infoWindow.open(map);
+        map.setCenter(pos);
+          },
+        () => {
+        handleLocationError(true, infoWindow, map.getCenter());
+          }
+         );
+     } else {
+        // Browser doesn't support Geolocation
+        handleLocationError(false, infoWindow, map.getCenter());
+        }
+        });
+function handleLocationError(browserHasGeolocation, infoWindow, pos) {
             infoWindow.setPosition(pos);
             infoWindow.setContent(
               browserHasGeolocation
@@ -91,87 +155,61 @@ function initMap() {
           
 
 
-
-
-
-
-
-          }
-
-            function prepareVicinity(vicinity){
-             const vicinityArray = vicinity.split(/[ ,]+/);
-              console.log(vicinityArray);
-              return vicinityArray[vicinityArray.length-1];
-
-            }
+// functions to prepare raw place information from google api 
+/// --> format for NYT fetch request URL
+function prepareVicinity(vicinity){
+const vicinityArray = vicinity.split(/[ ,]+/);
+console.log(vicinityArray);
+return vicinityArray[vicinityArray.length-1];
+}
             
-            function prepareSearch(name, address,cityname){
-              console.log("we did a regular search");
-              const searchArray = name.split(/[ ,']+/);
-              const searchName = searchArray.join('_');
-              console.log("this is the search name:" + searchName);
-              console.log(`http://api.nytimes.com/svc/search/v2/articlesearch.json?q=${searchName}_${cityname}&sort=oldest&api-key=${nytapi}`);
-              fetch(`http://api.nytimes.com/svc/search/v2/articlesearch.json?q=${name}_${cityname}&sort=oldest&api-key=${nytapi}`)
-              .then(response => response.json())
-              .then(responseJson => 
-                displayResults(responseJson))
-              //.catch(error => alert('Something went wrong. Try again later.'))
+function prepareSearch(name, cityname){
+console.log("we did a regular search");
+const searchArray = name.split(/[ ,']+/);
+const searchName = searchArray.join('_');
+fetchURL(searchName,cityname)
+}
 
-            }
+function prepareAltSearch(name, address){
+console.log("time to do an alt search");
+const altSearchAddress = prepareAddressForAltSearch(address);
+fetchURL(name,altSearchAddress);
+  }
 
-            function prepareAltSearch(name, address){
-              console.log("time to do an alt search");
-              const altSearchArray = prepareAddress(address);
-              console.log("here is the alt search array: "+ altSearchArray);
-              const altSearch = altSearchArray.join('_');
-              fetch(`http://api.nytimes.com/svc/search/v2/articlesearch.json?q=${altSearch}&sort=oldest&api-key=${nytapi}`)
-              .then(response => response.json())
-              .then(responseJson => 
-                displayResults(responseJson))
+function prepareAddressForAltSearch(address){
+const addressArray = address.split(/[',']+/);
+console.log("here is the address array: " + addressArray);
+const altVicinity = addressArray[0];
+const altCity = addressArray[1];
+const altSearchArrayRaw = [altVicinity, altCity];
+return altSearchArrayRaw;
+  }
 
 
-            }
 
-            function prepareAddress(address){
-              const addressArray = address.split(/[',']+/);
-              console.log("here is the address array: " + addressArray);
-              const altVicinity = addressArray[0];
-              const altCity = addressArray[1];
-              const altSearchArrayRaw = [altVicinity, altCity];
-              return altSearchArrayRaw;
-            }
+// factory function to create a custom fetch request given click inputs 
+function fetchURL(name, item2){
+console.log(`http://api.nytimes.com/svc/search/v2/articlesearch.json?q=${name}_${item2}&sort=oldest&api-key=KtYlaYp2oCUKHAhuNPmxTfftZnAUnGbU`);
+fetch(`http://api.nytimes.com/svc/search/v2/articlesearch.json?q=${name}_${item2}&sort=oldest&api-key=KtYlaYp2oCUKHAhuNPmxTfftZnAUnGbU`)
+  .then(response => response.json())
+  .then(responseJson => 
+    displayResults(responseJson))
+    }
 
-            function displayResults(responseJson){
-              $('#results').empty();
-              // formatting note: responseJson.response.docs[i]abstract
-              for(let i=0; i< 10; i++){
-                if(!responseJson.response.docs[i].headline.main == false){
-                  
-                  console.log(responseJson.response.docs[i].headline.main);
-                  const yearRaw = responseJson.response.docs[i].pub_date;
-                  const year = yearRaw.substring(0,4);
-                $('#results').append(`<p>Headline: ${responseJson.response.docs[i].headline.main}</p>`);
-                $('#results').append(`<p>URL: ${responseJson.response.docs[i].web_url}</p>`);
-                $('#results').append(`<p>YEAR: ${year}</p>`);
-              } else if (!responseJson.response.docs[i].headline.main){
-                console.log("article with no headline");
-              }
-            }
+function displayResults(responseJson){
+$('#results').empty();
+  // formatting note: responseJson.response.docs[i]abstract
+  for(let i=0; i< 10; i++){
+    if(!responseJson.response.docs[i].headline.main == false){
+      console.log(responseJson.response.docs[i].headline.main);
+      const yearRaw = responseJson.response.docs[i].pub_date;
+      const year = yearRaw.substring(0,4);
+        $('#results').append(`<p>Headline: ${responseJson.response.docs[i].headline.main}</p>`);
+        $('#results').append(`<p>URL: ${responseJson.response.docs[i].web_url}</p>`);
+        $('#results').append(`<p>YEAR: ${year}</p>`);
+          } else if (!responseJson.response.docs[i].headline.main){
+          console.log("article with no headline");
           }
-            // on click:
-           
-
-
-            // for the address_components return, if you wanted to access the address that way:
-            //here are some ways to do that:
-                /*if (place[i].types.indexOf("locality") > -1) {
-                  var locality = place[i].long_name;
-                 results.push(locality);
-                console.log(results);
-            } else if (array[i].types.indexOf("route") > -1){
-             results.push({"route":array[i].long_name});}
-            // console.log("we have a route:" + array[i].types);
-           else if (place.address_components[i].types.indexOf("administrative_area_level_2") > -1) {
-             const aa2 = place.address_components[i].long_name;
-             placeArray.push(aa2); */
-           
+        }
+      }
+          
