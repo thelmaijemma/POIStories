@@ -155,8 +155,8 @@ return altSearchArrayRaw;
 
 // factory function to create a custom fetch request given click inputs 
 function fetchURL(name, item2){
-console.log(`http://api.nytimes.com/svc/search/v2/articlesearch.json?q=${name}_${item2}&sort=oldest&api-key=KtYlaYp2oCUKHAhuNPmxTfftZnAUnGbU`);
-fetch(`http://api.nytimes.com/svc/search/v2/articlesearch.json?q=${name}_${item2}&sort=oldest&api-key=KtYlaYp2oCUKHAhuNPmxTfftZnAUnGbU`)
+console.log(`https://api.nytimes.com/svc/search/v2/articlesearch.json?q=${name}_${item2}&sort=oldest&api-key=KtYlaYp2oCUKHAhuNPmxTfftZnAUnGbU`);
+fetch(`https://api.nytimes.com/svc/search/v2/articlesearch.json?q=${name}_${item2}&sort=oldest&api-key=KtYlaYp2oCUKHAhuNPmxTfftZnAUnGbU`)
   .then(response => response.json())
   .then(responseJson => 
     displayResults(responseJson))
