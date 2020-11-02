@@ -108,40 +108,6 @@ function renderPlaces(map){
 
 }
 
-
-
-
-
-// CURRENT LOCATION TOOL  
-let infoWindow;
-infoWindow = new google.maps.InfoWindow();
-  const locationButton = document.createElement("button");
-    locationButton.textContent = "Pan to Current Location";
-    locationButton.classList.add("custom-map-control-button");
-    map.controls[google.maps.ControlPosition.TOP_CENTER].push(locationButton);
-    locationButton.addEventListener("click", () => {
-    // Try HTML5 geolocation.
-    if (navigator.geolocation) {
-        navigator.geolocation.getCurrentPosition(
-        (position) => {
-        const pos = {
-        lat: position.coords.latitude,
-        lng: position.coords.longitude,
-          };
-        infoWindow.setPosition(pos);
-        infoWindow.setContent("Location found.");
-        infoWindow.open(map);
-        map.setCenter(pos);
-          },
-        () => {
-        handleLocationError(true, infoWindow, map.getCenter());
-          }
-         );
-     } else {
-        // Browser doesn't support Geolocation
-        handleLocationError(false, infoWindow, map.getCenter());
-        }
-        });
 function handleLocationError(browserHasGeolocation, infoWindow, pos) {
             infoWindow.setPosition(pos);
             infoWindow.setContent(
@@ -204,9 +170,9 @@ $('#results').empty();
       console.log(responseJson.response.docs[i].headline.main);
       const yearRaw = responseJson.response.docs[i].pub_date;
       const year = yearRaw.substring(0,4);
-        $('#results').append(`<p>Headline: ${responseJson.response.docs[i].headline.main}</p>`);
-        $('#results').append(`<p>URL: ${responseJson.response.docs[i].web_url}</p>`);
-        $('#results').append(`<p>YEAR: ${year}</p>`);
+        $('#results').append(`<p class="headline">Headline: ${responseJson.response.docs[i].headline.main}</p>`);
+        $('#results').append(`<p>URL: <a href="${responseJson.response.docs[i].web_url}">${responseJson.response.docs[i].web_url}</a></p>`);
+        $('#results').append(`<p class="year">YEAR: ${year}</p>`);
           } else if (!responseJson.response.docs[i].headline.main){
           console.log("article with no headline");
           }
