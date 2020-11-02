@@ -5,7 +5,7 @@
     <title>POI Stories</title>
     <script src="https://polyfill.io/v3/polyfill.min.js?features=default"></script>
     <script
-      src="https://maps.googleapis.com/maps/api/js?key=YOURAPIKEY&callback=initMap&libraries=places&v=weekly"
+      src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAHuXN3aIoVl97Q13eSbYyf52A_0QZ2Y8E&callback=initMap&libraries=places&v=weekly"
       defer
     ></script>
     <link rel="stylesheet" type="text/css" href="style.css" />
@@ -13,12 +13,18 @@
     <script src="https://code.jquery.com/jquery-3.4.1.slim.js" crossorigin="anonymous"></script>
   </head>
   <body>
+    <input
+      id="pac-input"
+      class="controls"
+      type="text"
+      placeholder="Search Box"
+    />
     <div id="map"></div>
     <div id="infowindow-content">
       <span id="place-address"></span>
     </div>
     <section class="instruction">
-      <h2>Pan to your location, or explore. Click on a POI</h2>
+      <h2>Click on a Point of Interest. POI Stories will load the oldest New York Times archives.</h2>
     </section>
     <section id="results">
     </section>
