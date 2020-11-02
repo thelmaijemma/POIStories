@@ -74,7 +74,7 @@ renderPlaces(map);
 // FORMAT PLACE ID AND POI CLICK EVENT LISTENER 
 function renderPlaces(map){
   placesService = new google.maps.places.PlacesService(map);
-      map.addListener('click', function (event){
+      map.addListener("click", function (event){
         if (isIconMouseEvent(event)) {
           console.log("You clicked on place:" + event.placeId);
           
