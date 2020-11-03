@@ -9,18 +9,16 @@ function initMap() {
       const map = new google.maps.Map(document.getElementById("map"), {
         zoom: 12,
         center: origin,
-        mapTypeId: "roadmap",
+       
 
       });
 
 // SEARCH BOX GENERATOR - GOOGLE CODE
 const input = document.getElementById("pac-input");
 const searchBox = new google.maps.places.SearchBox(input);
-  map.controls[google.maps.ControlPosition.TOP_LEFT].push(input);
+  map.controls[google.maps.ControlPosition.TOP_CENTER].push(input);
   // Bias the SearchBox results towards current map's viewport.
-  map.addListener("bounds_changed", () => {
-    searchBox.setBounds(map.getBounds());
-  });
+
   let markers = [];
   // Listen for the event fired when the user selects a prediction and retrieve
   // more details for that place.
@@ -34,63 +32,40 @@ searchBox.addListener("places_changed", () => {
     marker.setMap(null);
   });
   markers = [];
-  // For each place, get the icon, name and location.
-  const bounds = new google.maps.LatLngBounds();
-  places.forEach((place) => {
 
-    const icon = {
-      url: place.icon,
-      size: new google.maps.Size(71, 71),
-      origin: new google.maps.Point(0, 0),
-      anchor: new google.maps.Point(17, 34),
-      scaledSize: new google.maps.Size(25, 25),
-    };
-    // Create a marker for each place.
-    markers.push(
-      new google.maps.Marker({
-        map,
-        icon,
-        title: place.name,
-        position: place.geometry.location,
-      })
-      );
-      if (place.geometry.viewport) {
-        // Only geocodes have viewport.
-        bounds.union(place.geometry.viewport);
-      } else {
-        bounds.extend(place.geometry.location);
-      }
-    });
-    map.fitBounds(bounds);
 
   })
 // INITIATE POI LISTENER 
-renderPlaces(map);
-    }
+map.addListener("click", function(event) {
+placesService = new google.maps.places.PlacesService(map);
+if (isIconMouseEvent(event)) {
+  console.log("You clicked on place:" + event.placeId);
+  
+  const pid = event.placeId;
 
+  render(placesService, pid);
+
+  }
+
+});
+}
 
 
 
 // FORMAT PLACE ID AND POI CLICK EVENT LISTENER 
-function renderPlaces(map){
-  placesService = new google.maps.places.PlacesService(map);
-      map.addListener("mousedown", function (event){
-        if (isIconMouseEvent(event)) {
-          console.log("You clicked on place:" + event.placeId);
+function render(service, placeiden){
+  $('button').click(function(){
+
+    const request = {
+      placeId: placeiden,
+      fields: ['address_components','formatted_address','name','vicinity']
+    };
           
-          const pid = event.placeId;
-          
-          const request = {
-            placeId: event.placeId,
-            fields: ['address_components','formatted_address','name','vicinity']
-          };
-          
-          placesService.getDetails(request, callback);
+          service.getDetails(request, callback);
           function callback(place, status) {
             let placeName = place.name;
             let placeAddress = place.formatted_address;
             console.log("here is the address: "+ placeAddress);
-           // console.log("name: " + placeName + " address: "+ placeAddress + " vicinity: "+ placeVicinity); 
            if (!place.vicinity){
              prepareAltSearch(placeName, placeAddress);
            } else {
@@ -104,9 +79,9 @@ function renderPlaces(map){
           }
   
              }
-            })
+            );
+            }
 
-}
 
 function handleLocationError(browserHasGeolocation, infoWindow, pos) {
             infoWindow.setPosition(pos);
@@ -170,9 +145,7 @@ $('#results').empty();
       console.log(responseJson.response.docs[i].headline.main);
       const yearRaw = responseJson.response.docs[i].pub_date;
       const year = yearRaw.substring(0,4);
-        $('#results').append(`<p class="headline">Headline: ${responseJson.response.docs[i].headline.main}</p>`);
-        $('#results').append(`<p>URL: <a href="${responseJson.response.docs[i].web_url}">${responseJson.response.docs[i].web_url}</a></p>`);
-        $('#results').append(`<p class="year">YEAR: ${year}</p>`);
+        $('#results').append(`<p class="headline">Headline: ${responseJson.response.docs[i].headline.main}</p><p>URL: <a href="${responseJson.response.docs[i].web_url}">${responseJson.response.docs[i].web_url}</a></p><p class="year">YEAR: ${year}</p>`);
           } else if (!responseJson.response.docs[i].headline.main){
           console.log("article with no headline");
           }
