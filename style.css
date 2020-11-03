@@ -9,7 +9,7 @@ body {
 }
 
 #map {
-  height: 40%;
+  height: 37%;
   width: 90%;
   margin: auto;
 }
@@ -22,8 +22,8 @@ body {
 .instruction{
   color: #fffeeb;
   text-align: center;
-  font-size: xxx-large;
-  width: 60%;
+  font-size: 40pt;
+  width: 80%;
   margin: auto;
 }
 
@@ -98,5 +98,10 @@ button {
     height: 40%;
     width: 70%;
     margin: auto;
+  }
+
+  .instruction{
+    font-size: xxx-large;
+    width: 60%;
   }
 }
