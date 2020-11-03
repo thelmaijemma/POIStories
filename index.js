@@ -38,7 +38,6 @@ const searchBox = new google.maps.places.SearchBox(input);
       marker.setMap(null);
     });
     markers = [];
-  })
      // For each place, get the icon, name and location.
      const bounds = new google.maps.LatLngBounds();
      places.forEach((place) => {
@@ -68,8 +67,11 @@ const searchBox = new google.maps.places.SearchBox(input);
       } else {
         bounds.extend(place.geometry.location);
       }
+    });
     map.fitBounds(bounds);
-  });
+    });
+ 
+
 
 // INITIATE POI LISTENER 
 map.addListener("click", function(event) {
@@ -84,7 +86,7 @@ if (isIconMouseEvent(event)) {
   }
 
 });
-
+}
 
 
 
@@ -187,5 +189,5 @@ $('#results').empty();
           }
         }
         }
-      }
+      
           
