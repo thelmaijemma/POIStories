@@ -9,7 +9,8 @@ function initMap() {
       const map = new google.maps.Map(document.getElementById("map"), {
         zoom: 12,
         center: origin,
-       
+        mapTypeId: "roadmap",
+
 
       });
 
@@ -18,23 +19,58 @@ const input = document.getElementById("pac-input");
 const searchBox = new google.maps.places.SearchBox(input);
   map.controls[google.maps.ControlPosition.TOP_CENTER].push(input);
   // Bias the SearchBox results towards current map's viewport.
+  map.addListener("bounds_changed", () => {
+    searchBox.setBounds(map.getBounds());
+  });
 
   let markers = [];
   // Listen for the event fired when the user selects a prediction and retrieve
   // more details for that place.
-searchBox.addListener("places_changed", () => {
-  const places = searchBox.getPlaces();
-  if (places.length == 0) {
-    return;
-  }
-  // Clear out the old markers.
-  markers.forEach((marker) => {
-    marker.setMap(null);
-  });
-  markers = [];
+  searchBox.addListener("places_changed", () => {
+    const places = searchBox.getPlaces();
 
+    if (places.length == 0) {
+      return;
+    }
 
+    // Clear out the old markers.
+    markers.forEach((marker) => {
+      marker.setMap(null);
+    });
+    markers = [];
   })
+     // For each place, get the icon, name and location.
+     const bounds = new google.maps.LatLngBounds();
+     places.forEach((place) => {
+       if (!place.geometry) {
+         console.log("Returned place contains no geometry");
+         return;
+       }
+       const icon = {
+         url: place.icon,
+         size: new google.maps.Size(71, 71),
+         origin: new google.maps.Point(0, 0),
+         anchor: new google.maps.Point(17, 34),
+         scaledSize: new google.maps.Size(25, 25),
+       };
+       // Create a marker for each place.
+       markers.push(
+        new google.maps.Marker({
+          map,
+          icon,
+          title: place.name,
+          position: place.geometry.location,
+        })
+      );
+      if (place.geometry.viewport) {
+        // Only geocodes have viewport.
+        bounds.union(place.geometry.viewport);
+      } else {
+        bounds.extend(place.geometry.location);
+      }
+    map.fitBounds(bounds);
+  });
+
 // INITIATE POI LISTENER 
 map.addListener("click", function(event) {
 placesService = new google.maps.places.PlacesService(map);
@@ -48,7 +84,7 @@ if (isIconMouseEvent(event)) {
   }
 
 });
-}
+
 
 
 
@@ -145,10 +181,11 @@ $('#results').empty();
       console.log(responseJson.response.docs[i].headline.main);
       const yearRaw = responseJson.response.docs[i].pub_date;
       const year = yearRaw.substring(0,4);
-        $('#results').append(`<p class="headline">Headline: ${responseJson.response.docs[i].headline.main}</p><p>URL: <a href="${responseJson.response.docs[i].web_url}">${responseJson.response.docs[i].web_url}</a></p><p class="year">YEAR: ${year}</p>`);
+        $('#results').append(`<p class="headline">Headline: ${responseJson.response.docs[i].headline.main}</p><p>URL: <a href="${responseJson.response.docs[i].web_url}">${responseJson.response.docs[i].web_url}</a></p><p class="year">YEAR: ${year}</p>`)
           } else if (!responseJson.response.docs[i].headline.main){
-          console.log("article with no headline");
+          console.log("article with no headline")
           }
+        }
         }
       }
           
