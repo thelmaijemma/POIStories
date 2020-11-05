@@ -7,7 +7,7 @@ function isIconMouseEvent(e) {
 function initMap() {
       const origin = { lat: 51.497518, lng:  -0.134912 };
       const map = new google.maps.Map(document.getElementById("map"), {
-        zoom: 12,
+        zoom: 14,
         center: origin,
         mapTypeId: "roadmap",
 
