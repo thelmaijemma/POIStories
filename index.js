@@ -3,7 +3,7 @@
 function isIconMouseEvent(e) {
   return "placeId" in e;
 }
-
+ 
 function initMap() {
       const origin = { lat: 51.497518, lng:  -0.134912 };
       const map = new google.maps.Map(document.getElementById("map"), {
