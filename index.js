@@ -1,9 +1,9 @@
-
+const apiKey = "KtYlaYp2oCUKHAhuNPmxTfftZnAUnGbU";
 // INITIATING THE MAP 
 function isIconMouseEvent(e) {
   return "placeId" in e;
 }
- 
+
 function initMap() {
       const origin = { lat: 51.497518, lng:  -0.134912 };
       const map = new google.maps.Map(document.getElementById("map"), {
@@ -22,7 +22,6 @@ const searchBox = new google.maps.places.SearchBox(input);
   map.addListener("bounds_changed", () => {
     searchBox.setBounds(map.getBounds());
   });
-
   let markers = [];
   // Listen for the event fired when the user selects a prediction and retrieve
   // more details for that place.
@@ -32,7 +31,6 @@ const searchBox = new google.maps.places.SearchBox(input);
     if (places.length == 0) {
       return;
     }
-
     // Clear out the old markers.
     markers.forEach((marker) => {
       marker.setMap(null);
@@ -70,12 +68,10 @@ const searchBox = new google.maps.places.SearchBox(input);
     });
     map.fitBounds(bounds);
     });
- 
-
 
 // INITIATE POI LISTENER 
 map.addListener("click", function(event) {
-placesService = new google.maps.places.PlacesService(map);
+const placesService = new google.maps.places.PlacesService(map);
 if (isIconMouseEvent(event)) {
   console.log("You clicked on place:" + event.placeId);
   
@@ -88,17 +84,13 @@ if (isIconMouseEvent(event)) {
 });
 }
 
-
-
 // FORMAT PLACE ID AND POI CLICK EVENT LISTENER 
 function render(service, placeiden){
   $('button').click(function(){
-
     const request = {
       placeId: placeiden,
       fields: ['address_components','formatted_address','name','vicinity']
-    };
-          
+    };    
           service.getDetails(request, callback);
           function callback(place, status) {
             let placeName = place.name;
@@ -120,7 +112,6 @@ function render(service, placeiden){
             );
             }
 
-
 function handleLocationError(browserHasGeolocation, infoWindow, pos) {
             infoWindow.setPosition(pos);
             infoWindow.setContent(
@@ -131,9 +122,6 @@ function handleLocationError(browserHasGeolocation, infoWindow, pos) {
             infoWindow.open(map);
           }
           
-          
-
-
 // functions to prepare raw place information from google api 
 /// --> format for NYT fetch request URL
 function prepareVicinity(vicinity){
@@ -164,16 +152,15 @@ const altSearchArrayRaw = [altVicinity, altCity];
 return altSearchArrayRaw;
   }
 
-
-
 // factory function to create a custom fetch request given click inputs 
 function fetchURL(name, item2){
-console.log(`https://api.nytimes.com/svc/search/v2/articlesearch.json?q=${name}_${item2}&sort=oldest&api-key=KtYlaYp2oCUKHAhuNPmxTfftZnAUnGbU`);
-fetch(`https://api.nytimes.com/svc/search/v2/articlesearch.json?q=${name}_${item2}&sort=oldest&api-key=KtYlaYp2oCUKHAhuNPmxTfftZnAUnGbU`)
+console.log(`https://api.nytimes.com/svc/search/v2/articlesearch.json?q=${name}_${item2}&sort=oldest&api-key=${apiKey}`);
+fetch(`https://api.nytimes.com/svc/search/v2/articlesearch.json?q=${name}_${item2}&sort=oldest&api-key=${apiKey}`)
   .then(response => response.json())
   .then(responseJson => 
     displayResults(responseJson))
-    }
+  .catch(error => alert('Unable to fetch archive for this POI. Try another POI.'))
+    } 
 
 function displayResults(responseJson){
 $('#results').empty();
@@ -183,7 +170,7 @@ $('#results').empty();
       console.log(responseJson.response.docs[i].headline.main);
       const yearRaw = responseJson.response.docs[i].pub_date;
       const year = yearRaw.substring(0,4);
-        $('#results').append(`<p class="headline">Headline: ${responseJson.response.docs[i].headline.main}</p><p>URL: <a href="${responseJson.response.docs[i].web_url}">${responseJson.response.docs[i].web_url}</a></p><p class="year">YEAR: ${year}</p>`)
+        $('#results').append(`<p class="headline">Headline: ${responseJson.response.docs[i].headline.main}</p><p>URL: <a href="${responseJson.response.docs[i].web_url}" target="_blank">${responseJson.response.docs[i].web_url}</a></p><p class="year">YEAR: ${year}</p>`)
           } else if (!responseJson.response.docs[i].headline.main){
           console.log("article with no headline")
           }
