@@ -34,10 +34,12 @@ h2 {
   background-image: url('https://images.pexels.com/photos/326311/pexels-photo-326311.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940');
   color: #fffeeb;
   text-align: center;
-  padding-inline: 5%;
+  padding-left: 3%;
+  padding-right: 3%;
   padding-bottom: 15%;
   padding-top: 5%;
   margin-top: 5%;
+  font-family: 'Playfair Display', serif;
 }
 
 
@@ -75,19 +77,19 @@ button {
 }
 
 .headline{
-  font-size: x-large;
+  font-size: xx-large;
   text-emphasis: bold;
 }
 
 .year{
-  font-size: x-large;
+  font-size: xx-large;
 }
 
 #results a {
   text-decoration: none;
   color: #fffeeb;
   background-color: brown;
-  font-size: large;
+  font-size: xx-large;
 }
 
 #map {
