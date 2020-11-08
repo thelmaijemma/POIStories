@@ -1,4 +1,5 @@
 const apiKey = "KtYlaYp2oCUKHAhuNPmxTfftZnAUnGbU";
+const urlBase = "https://api.nytimes.com/svc/search/v2/articlesearch.json?q=";
 // INITIATING THE MAP 
 function isIconMouseEvent(e) {
   return "placeId" in e;
@@ -15,8 +16,8 @@ function initMap() {
       });
 
 // SEARCH BOX GENERATOR - GOOGLE CODE
-const input = document.getElementById("pac-input");
-const searchBox = new google.maps.places.SearchBox(input);
+  const input = document.getElementById("pac-input");
+  const searchBox = new google.maps.places.SearchBox(input);
   map.controls[google.maps.ControlPosition.TOP_CENTER].push(input);
   // Bias the SearchBox results towards current map's viewport.
   map.addListener("bounds_changed", () => {
@@ -91,14 +92,14 @@ function render(service, placeiden){
       placeId: placeiden,
       fields: ['address_components','formatted_address','name','vicinity']
     };    
-          service.getDetails(request, callback);
+    service.getDetails(request, callback);
           function callback(place, status) {
             let placeName = place.name;
             let placeAddress = place.formatted_address;
             console.log("here is the address: "+ placeAddress);
-           if (!place.vicinity){
+            if (!place.vicinity){
              prepareAltSearch(placeName, placeAddress);
-           } else {
+            } else {
             let placeVicinity = place.vicinity;
             console.log("this is the vicinity: " + placeVicinity);
             const city = prepareVicinity (placeVicinity);
@@ -110,7 +111,7 @@ function render(service, placeiden){
   
              }
             );
-            }
+}
 
 function handleLocationError(browserHasGeolocation, infoWindow, pos) {
             infoWindow.setPosition(pos);
@@ -120,47 +121,55 @@ function handleLocationError(browserHasGeolocation, infoWindow, pos) {
                 : "Error: Your browser doesn't support geolocation."
             );
             infoWindow.open(map);
-          }
+}
           
 // functions to prepare raw place information from google api 
 /// --> format for NYT fetch request URL
 function prepareVicinity(vicinity){
-const vicinityArray = vicinity.split(/[ ,]+/);
-console.log(vicinityArray);
-return vicinityArray[vicinityArray.length-1];
+  const vicinityArray = vicinity.split(/[ ,]+/);
+  console.log(vicinityArray);
+  return vicinityArray[vicinityArray.length-1];
 }
             
 function prepareSearch(name, cityname){
 console.log("we did a regular search");
 const searchArray = name.split(/[ ,']+/);
 const searchName = searchArray.join('_');
-fetchURL(searchName,cityname)
+makeURL(searchName,cityname)
 }
 
 function prepareAltSearch(name, address){
-console.log("time to do an alt search");
-const altSearchAddress = prepareAddressForAltSearch(address);
-fetchURL(name,altSearchAddress);
-  }
+  console.log("time to do an alt search");
+  const altSearchAddress = prepareAddressForAltSearch(address);
+  makeURL(name,altSearchAddress);
+  console.log("this is the revised alt: " + altSearchAddress);
+}
 
 function prepareAddressForAltSearch(address){
-const addressArray = address.split(/[',']+/);
-console.log("here is the address array: " + addressArray);
-const altVicinity = addressArray[0];
-const altCity = addressArray[1];
-const altSearchArrayRaw = [altVicinity, altCity];
-return altSearchArrayRaw;
-  }
+  const addressArray = address.split(/[', ']+/);
+  console.log("here is the address array: " + addressArray);
+  const altVicinity = addressArray[0];
+  const altCity = addressArray[1];
+  const altSearchArrayRaw = [altVicinity,altCity];
+  const altSearchArrayJoined = altSearchArrayRaw.join('_');
+  return altSearchArrayJoined;
+}
+// url generating function
+function makeURL(name, item2){
+  const fullURl = urlBase.concat(name,"_",item2,"&sort=oldest&api-key=",apiKey);
+  console.log("this is the full url: " + fullURl);
+  fetchURL(fullURl);
+}
+
 
 // factory function to create a custom fetch request given click inputs 
-function fetchURL(name, item2){
-console.log(`https://api.nytimes.com/svc/search/v2/articlesearch.json?q=${name}_${item2}&sort=oldest&api-key=${apiKey}`);
-fetch(`https://api.nytimes.com/svc/search/v2/articlesearch.json?q=${name}_${item2}&sort=oldest&api-key=${apiKey}`)
+function fetchURL(url){
+fetch(url)
   .then(response => response.json())
   .then(responseJson => 
     displayResults(responseJson))
-  .catch(error => alert('Unable to fetch archive for this POI. Try another POI.'))
-    } 
+  .catch(error => $(results).html(`<p>No Results for this POI</p>`))
+} 
 
 function displayResults(responseJson){
 $('#results').empty();
@@ -174,7 +183,7 @@ $('#results').empty();
           } else if (!responseJson.response.docs[i].headline.main){
           console.log("article with no headline")
           }
-        }
-        }
+    }
+}
       
           
