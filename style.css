@@ -27,7 +27,7 @@ body {
 }
 
 h2 {
-  font-size: 60pt;
+  font-size: 50pt;
 }
 
 #results{
@@ -90,6 +90,7 @@ button {
   color: #fffeeb;
   background-color: brown;
   font-size: xx-large;
+  max-width: 70%;
 }
 
 #map {
