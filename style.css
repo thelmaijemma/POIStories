@@ -1,6 +1,7 @@
 body {
   color: #fffeeb;
   background-image: url('https://images.pexels.com/photos/2908984/pexels-photo-2908984.jpeg?auto=compress&cs=tinysrgb&h=750&w=1260');
+  max-width: 100%;
 }
 
 .instruction, .submit, .results{
@@ -8,8 +9,13 @@ body {
   flex-direction: column;
 }
 
+#mapbox{
+  height: 550px;
+  margin: auto;
+}
+
 #map {
-  height: 37%;
+  height: 100%;
   width: 90%;
   margin: auto;
 }
@@ -93,15 +99,17 @@ button {
   max-width: 70%;
 }
 
-#map {
-  height: 40%;
-  width: 90%;
-  margin: auto;
+@media (min-width: 768px){
+  #mapbox{
+    height: 750px;
+  }
 }
-
 @media (min-width: 992px){
+  #mapbox{
+    height: 750px;
+  }
   #map {
-    height: 40%;
+    height: 90%;
     width: 70%;
     margin: auto;
   }
