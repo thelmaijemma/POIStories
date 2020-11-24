@@ -20,11 +20,6 @@ body {
   margin: auto;
 }
 
- #results{
-  width: 120%;
-  margin: auto;
-}
-
 .instruction{
   color: #fffeeb;
   text-align: center;
@@ -46,6 +41,7 @@ h2 {
   padding-bottom: 15%;
   padding-top: 5%;
   margin-top: 5%;
+  margin: auto;
   font-family: 'Playfair Display', serif;
 }
 
@@ -97,13 +93,9 @@ button {
   text-decoration: none;
   color: #fffeeb;
   background-color: brown;
-  font-size: x-large;
+  font-size: large;
   max-width: 70%;
   word-wrap: break-word;
-}
-
-#results{
-  max-width: 400px;
 }
 
 @media (min-width: 768px){
