@@ -93,7 +93,7 @@ button {
   font-size: xx-large;
 }
 
-.link {
+#results p {
   text-decoration: none;
   color: #fffeeb;
   background-color: brown;
