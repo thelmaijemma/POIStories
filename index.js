@@ -179,7 +179,7 @@ $('#results').empty();
       console.log(responseJson.response.docs[i].headline.main);
       const yearRaw = responseJson.response.docs[i].pub_date;
       const year = yearRaw.substring(0,4);
-        $('#results').append(`<p class="headline">Headline: ${responseJson.response.docs[i].headline.main}</p><p>URL: <a class="link" href="${responseJson.response.docs[i].web_url}" target="_blank">${responseJson.response.docs[i].web_url}</a></p><p class="year">YEAR: ${year}</p>`)
+        $('#results').append(`<p class="headline">Headline: ${responseJson.response.docs[i].headline.main}</p><p><a class="link" href="${responseJson.response.docs[i].web_url}" target="_blank">Click To View Archive</a></p><p class="year">YEAR: ${year}</p>`)
           } else if (!responseJson.response.docs[i].headline.main){
           console.log("article with no headline")
           }
