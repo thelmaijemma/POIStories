@@ -81,7 +81,7 @@ button {
   margin: auto;
 }
 .headline{
-  font-size: xx-large;
+  font-size: x-large;
   text-emphasis: bold;
 }
 
@@ -89,7 +89,7 @@ button {
   font-size: xx-large;
 }
 
-#results p {
+#results a {
   text-decoration: none;
   color: #fffeeb;
   background-color: brown;
