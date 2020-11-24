@@ -93,12 +93,12 @@ button {
   font-size: xx-large;
 }
 
-#results a {
+.link {
   text-decoration: none;
   color: #fffeeb;
   background-color: brown;
   font-size: x-large;
-  max-width: 300px;
+  max-width: 70%;
 }
 
 #results{
@@ -109,8 +109,8 @@ button {
   #mapbox{
     height: 750px;
   }
-  #results a {
-    max-width: 70%;
+  #results {
+    max-width: 100%;
   }
 }
 @media (min-width: 992px){
